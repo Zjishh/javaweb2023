@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjh.mybatistest.mapper.EmpMapper">
+    <sql id="sel">select *</sql>
+
+    <!--    id和方法名保持一致-->
+    <!--    resultType单条记录封装的类型-->
+    <select id="select" resultType="com.zjh.mybatistest.pojo.Emp">
+       <include refid="sel"></include>
+        from emp
+        <where>
+            <if test="name!=null">name like
+                concat('%', #{name}, '%')
+            </if>
+            <if test="gender != null">and gender = #{gender}</if>
+            <if test="t1!=null and t2 != null">
+                and entrydate between
+                #{t1} and #{t2}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <update id="updata">
+        update emp
+        <set>
+            <if test="username != null">username=#{username},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="image != null">image=#{image},</if>
+            <if test="job != null">job=#{job},</if>
+            <if test="entrydate != null">entrydate=#{entrydate},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time=#{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <delete id="somedelete">
+        delete from emp where id in
+        <!--        collection  便利的集合-->
+        <!--        item 遍历出来的元素-->
+        <!--        separator 分隔符-->
+        <!--        open 遍历开始前的SQL片段-->
+        <!--        close 后拼接的-->
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
